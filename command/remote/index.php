@@ -26,10 +26,16 @@ $name       = $_GET["name"];
 
 
 $apiPath        = "/var/www/command/remote";
+$cmdPath        = "/var/www/command/";
 $playlistPath   = "/var/lib/mpd/playlists";
 $radioList      = $playlistPath . "/Radio_Play.m3u";
 
 $db             = new SQLite3('/var/local/www/db/moode-sqlite3.db');
+
+
+
+
+
 
 // FIGURE OUT SIGNAL DIRECTION
 if(isset($dir) && !empty($dir)){
@@ -336,6 +342,56 @@ if(isset($dir) && !empty($dir)){
             
             switch ($mod) {      
             
+            
+            case "status":
+                if(!$cmd || $cmd == ""){$cmd = "device";}
+                
+                    
+                $sysinfo = explode("\n", shell_exec("sudo " . $cmdPath . "sysinfo.sh | awk '/\t/'"));
+                foreach ($sysinfo as $a) {
+                    $b = explode("=", $a);
+                    $device[strtolower(trim($b[0]))]=strtolower($b[1]);
+                }    
+                    
+                if(isset($cmd) && !empty($cmd)){
+                    switch ($cmd) {
+                        case "temp":
+                           echo($device["soc temperature"]); 
+                            
+                        break;
+                        default:
+                            echo("Spotify: " . $device["spotify receiver"] . "<br>");
+                            echo("BT Ctrl: " . $device["bluetooth controller"] . "<br>");
+                            echo("BT Pair: " . $device["pairing agent"] . "<br>");
+                            
+                            if($device["wlan address"] != "unassigned"){
+                                echo("WiFi IP: " . $device["wlan address"] . "<br>");
+                            }
+                               
+                            if($device["ethernet address"] != "unassigned"){
+                                echo("Ethr IP: " . $device["ethernet address"] . "<br>");
+                            }
+                            
+                            
+                            if($device["bluetooth controller"] == "on") {
+                                echo("Bluetooth Yes");
+                                if($device["pairing agent"] != "off"){
+                                   echo("Bluetooth Pair Yes"); 
+                                }
+                            }
+                        
+                       
+                        
+                            
+                        
+                            
+                        break;
+                    }
+                }
+            break;          
+                    
+                    
+                    
             case "system":
                 if(isset($cmd) && !empty($cmd)){
                     switch ($cmd) {
@@ -343,7 +399,34 @@ if(isset($dir) && !empty($dir)){
                             echo(shell_exec("sudo usermod -G video www-data"));
                             echo(shell_exec("sudo /opt/vc/bin/vcgencmd measure_temp"));
                             break;
+                        case "players":
+                            require_once('../../inc/playerlib.php');
 
+                            $array = sdbquery("SELECT value FROM cfg_system WHERE param='hostname'", cfgdb_connect());
+                            $thishost = strtolower($array[0]['value']);
+
+                            $result = shell_exec("avahi-browse -a -t -r -p | awk -F '[;.]' '/IPv4/ && /moOde/ && /audio/ && /player/ && /=/ {print $7\",\"$9\".\"$10\".\"$11\".\"$12}' | sort");
+                            $line = strtok($result, "\n");
+                            $players = '{"players": [';
+                            $c = 0;
+                            echo(sizeof($line));
+                            
+                            while ($line) {
+                                list($host, $ipaddr) = explode(",", $line);
+                                if (strtolower($host) != $thishost) {
+                                    if($c < 1 ){
+                                        $players .= sprintf('{"ipaddr": "http://%s", "host": "%s" } ', $ipaddr, $host);
+                                    } else {
+                                        $players .= sprintf('{"ipaddr": "http://%s", "host": "%s" }, ', $ipaddr, $host);
+                                    }
+                                }
+                                $c++;
+                                $line = strtok("\n");
+                            }
+                            $players .= "]}";
+                            echo($players);
+                            
+                            break;
                         default:
                             break;
                     }
