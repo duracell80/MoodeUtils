@@ -354,34 +354,82 @@ if(isset($dir) && !empty($dir)){
                 }    
                     
                 if(isset($cmd) && !empty($cmd)){
+                    //header("Content-Type: application/json");
+                    
                     switch ($cmd) {
                         case "temp":
-                           echo($device["soc temperature"]); 
-                            
+                           $json_out = '
+                            {"status": {
+                              "temp": "'.$device["soc temperature"].'"
+                            }}';
+                            echo($json_out);
                         break;
+                        
+                        case "mem":
+                           $json_out = '
+                            {"status": {
+                              "mem": "'.$device["memory free"].'"
+                            }}';
+                            echo($json_out);
+                        break;
+                            
+                        case "vol":
+                           $json_out = '
+                            {"status": {
+                              "vol": "'.$device["volume knob"].'"
+                            }}';
+                            echo($json_out);
+                        break;
+                        
+                        case "net":
+                           $json_out = '
+                            {"status": {
+                              "wifi": "'.$device["wlan address"].'",
+                              "eth0": "'.$device["ethernet address"].'",
+                              "btctrl": "'.$device["bluetooth controller"].'",
+                              "btpair": "'.$device["pairing agent"].'"
+                            }}';
+                            echo($json_out);
+                        break;
+                            
+                        case "services":
+                           $json_out = '
+                            {"status": {
+                              "spotify": "'.$device["spotify receiver"].'",
+                              "airplay": "'.$device["airplay receiver"].'",
+                              "squeezelite": "'.$device["squeezelite"].'",
+                              "upnp": "'.$device["upnp client"].'"
+                            }}';
+                            echo($json_out);
+                        break;
+                            
+                        case "display":
+                           $json_out = '
+                            {"status": {
+                              "localui": "'.$device["local ui display"].'",
+                              "brightness": "'.$device["brightness"].'"
+                            }}';
+                            echo($json_out);
+                        break;
+                            
                         default:
-                            echo("Spotify: " . $device["spotify receiver"] . "<br>");
-                            echo("BT Ctrl: " . $device["bluetooth controller"] . "<br>");
-                            echo("BT Pair: " . $device["pairing agent"] . "<br>");
                             
-                            if($device["wlan address"] != "unassigned"){
-                                echo("WiFi IP: " . $device["wlan address"] . "<br>");
-                            }
-                               
-                            if($device["ethernet address"] != "unassigned"){
-                                echo("Ethr IP: " . $device["ethernet address"] . "<br>");
-                            }
+                            $json_out = '
+                            {"status": {
+                              "mem": "'.$device["memory free"].'",
+                              "temp": "'.$device["soc temperature"].'",
+                              "vol": "'.$device["volume knob"].'",
+                              "wifi": "'.$device["wlan address"].'",
+                              "eth0": "'.$device["ethernet address"].'",
+                              "btctrl": "'.$device["bluetooth controller"].'",
+                              "btpair": "'.$device["pairing agent"].'",
+                              "spotify": "'.$device["spotify receiver"].'",
+                              "airplay": "'.$device["airplay receiver"].'",
+                              "squeezelite": "'.$device["squeezelite"].'",
+                              "upnp": "'.$device["upnp client"].'"
+                            }}';
                             
-                            
-                            if($device["bluetooth controller"] == "on") {
-                                echo("Bluetooth Yes");
-                                if($device["pairing agent"] != "off"){
-                                   echo("Bluetooth Pair Yes"); 
-                                }
-                            }
-                        
-                       
-                        
+                            echo($json_out);
                             
                         
                             
