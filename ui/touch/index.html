@@ -1,0 +1,128 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <title>Sticky Footer Template for Bootstrap</title>
+
+    
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="./css/ui-touch.css" rel="stylesheet">
+    <link href="./css/ui-touch-fonts.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    
+    
+    <script>
+    $( document ).ready(function() {
+        $( ".playbar .icon-more" ).click(function() {
+            $( ".playbar .playbar-controls" ).hide();
+            $( ".playbar .playbar-more" ).show();
+            
+        });
+        
+        $( ".playbar .icon-close" ).click(function() {
+            $( ".playbar .playbar-more" ).hide();
+            $( ".playbar .playbar-controls" ).show();
+        });
+    });
+    </script>
+    
+  </head>
+
+  <body>
+    <div class="wrapper">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark player-nav-menu">
+    <a class="navbar-brand" href="#"><i class="material-icons">arrow_back</i></a>
+    </nav>      
+          
+    <!-- Begin page content -->
+    <div role="main" class="main row">
+        <div class="col-sm-4 player-status">
+            <div class="container-fluid">
+            dfsfsf
+            </div>
+        </div>
+        <div class="col-sm-8">
+        <ul class="list-group player-main-menu">
+
+            <li class="list-group-item">
+                <i class="material-icons">playlist_play</i>
+                <div class="bmd-list-group-col">
+                    <h3 class="list-group-item-heading">Playlists</h3>
+                </div>
+                <i class="material-icons">chevron_right</i>
+            </li>
+            
+            <li class="list-group-item">
+                <i class="material-icons">mic_none</i>
+                <div class="bmd-list-group-col">
+                    <h3 class="list-group-item-heading">Moode Radio</h3>
+                </div>
+                <i class="material-icons">chevron_right</i>
+            </li>
+            
+            <li class="list-group-item">
+                <i class="material-icons">mic</i>
+                <div class="bmd-list-group-col">
+                    <h3 class="list-group-item-heading">My Radio</h3>
+                </div>
+                <i class="material-icons">chevron_right</i>
+            </li>
+  
+            <li class="list-group-item">
+                <i class="material-icons">album</i>
+                <div class="bmd-list-group-col">
+                    <h3 class="list-group-item-heading">Artists</h3>
+                </div>
+                <i class="material-icons">chevron_right</i>
+            </li>
+
+        </ul>
+        
+        </div>
+        
+    
+          
+    </div>
+      
+      
+      
+      
+    <footer class="playbar">
+      <div class="container-fluid">
+         <div class="playbar-progress"></div>
+          <div class="row playbar-controls">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">skip_previous</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-active">play_circle_filled</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">skip_next</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-more">more_vert</i></div>
+                </div>
+            </div>
+          </div>
+          
+          
+          <div class="row playbar-more">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">replay_30</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-active">volume_mute</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">forward_30</i></div>
+                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-close">more_vert</i></div>
+                </div>
+            </div>
+          </div>
+          
+      </div>
+    </footer>
+          
+</div>
+  
+
+</body></html>

@@ -1,0 +1,130 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+    background-color : #000;
+    
+}
+
+
+
+:root {
+  --accent-color: #52b529;
+}
+
+
+.wrapper {
+    overflow : hidden;
+}
+
+
+.main {
+    height : 80%;
+    width : 100%;
+    overflow-y: auto;
+    background : #000;
+    color : #fff;
+    padding-bottom : 300px;
+}
+
+.main .player-status {
+   
+}
+
+
+
+
+.playbar {
+    position            : absolute;
+    bottom              : 0;
+    width               : 100%;
+    height              : 115px;
+    background-color    : #fff;
+    text-align          : center;
+}
+
+.playbar-more {
+    display             : none;
+}
+
+
+.playbar .container-fluid {
+    height              : auto;
+}
+
+.playbar-controls .icon-active {
+    color               : var(--accent-color);
+}
+
+.playbar-progress {
+    background-color    : var(--accent-color);
+    height              : 3px;
+    margin-left         : -15px;
+    margin-right        : -15px;
+}
+
+
+.player-nav-menu {
+    background-color : transparent !important;
+}
+
+
+
+.player-main-menu {
+    background: #333;
+    color : #fff;
+    margin : 5%;
+    border-radius: 30px;
+}
+
+.player-main-menu li {
+    background: #333;
+    color : #fff;
+    width : 90%;
+    margin-left : 5%;
+    padding : 3% 3% 3% 0%;
+    border-bottom: 1px solid #666;
+   
+}
+
+.player-main-menu h3 {
+    font-size : 125%;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+
+
+
+
+
+
+
+
+/* Pi Touch (landscape) ----------- */
+@media only screen and (max-device-width : 850px) and (orientation : landscape) {
+    .hidden-l-pi {
+        display : none;
+    }
+    
+    .playbar {
+      height: 90px;
+    }
+}
+
+/* Pi Touch (portrait) ----------- */
+@media only screen and (max-device-width : 480px) and (orientation : portrait) {
+    .hidden-p-pi {
+        display : none;
+    }
+    
+    .playbar {
+      height: 75px;
+    }
+}
