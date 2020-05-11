@@ -347,16 +347,62 @@ if(isset($dir) && !empty($dir)){
                 if(!$cmd || $cmd == ""){$cmd = "device";}
                 
                     
-                $sysinfo = explode("\n", shell_exec("sudo " . $cmdPath . "sysinfo.sh | awk '/\t/'"));
-                foreach ($sysinfo as $a) {
-                    $b = explode("=", $a);
-                    $device[strtolower(trim($b[0]))]=strtolower($b[1]);
-                }    
-                    
                 if(isset($cmd) && !empty($cmd)){
+                    
+                    $sysinfo = explode("\n", shell_exec("sudo " . $cmdPath . "sysinfo.sh | awk '/\t/'"));
+                    foreach ($sysinfo as $a) {
+                        $b = explode("=", $a);
+                        $device[strtolower(trim($b[0]))]=strtolower($b[1]);
+                    }
+
+                    function TimeToSec($time) {
+                        $sec = 0;
+                        foreach (array_reverse(explode(':', $time)) as $k => $v) $sec += pow(60, $k) * $v;
+                        return $sec;
+                    }
+                    
                     //header("Content-Type: application/json");
                     
                     switch ($cmd) {
+                        case "track":
+                        $track_title    = shell_exec("sudo mpc -f %title% | head -1");
+                        $track_album    = shell_exec("sudo mpc -f %album% | head -1");
+                        $track_artist   = "";
+                        $track_time     = shell_exec("sudo mpc -f %time% | head -1");
+                        $track_percent  = shell_exec("sudo mpc status | awk 'NR==2 {print}' | grep -o '(.*)' | tr -d '(%)'");
+                        $track_elapsed  = shell_exec("sudo mpc status | awk '/^\[playing\]/ { sub(/\/.+/,\"\",$3); split($3,a,/:/); print a[1]*60+a[2] }'");
+                            
+                        $track_remaining    = TimeToSec($track_time) - $track_elapsed;
+                        $track_total        = TimeToSec($track_time);
+                            
+                        if($track_elapsed < 1) {
+                            $track_elapsed = shell_exec("sudo mpc status | awk '/^\[paused\]/ { sub(/\/.+/,\"\",$3); split($3,a,/:/); print a[1]*60+a[2] }'");
+                            $track_playing  = "no";
+                            $track_paused   = "yes";
+                            $track_volume   = $device["volume knob"];
+                        } else {
+                            $track_playing  = "yes";
+                            $track_paused   = "no";
+                            $track_volume   = shell_exec("mpc status | sed -n '/volume/p' | cut -c8-10 | sed 's/^[ \t]*//'");
+                            $track_artist   = shell_exec("sudo mpc -f %artist% | head -1");
+                        }   
+                            
+                        $json_out = '
+                            {"track": {
+                              "artist":  "'     . $track_artist.'",
+                              "album":  "'      . $track_album.'",
+                              "title":  "'      . $track_title.'",
+                              "playing":  "'    . $track_playing.'",
+                              "paused":  "'     . $track_paused.'",
+                              "total":  "'      . gmdate("H:i:s", $track_total).'",
+                              "elapsed":  "'    . gmdate("H:i:s", $track_elapsed).'",
+                              "remaining":  "'  . gmdate("H:i:s", $track_remaining).'",
+                              "percent":  "'    . $track_percent.'",
+                              "volume":  "'     . $track_volume.'"
+                            }}';
+                            echo($json_out);
+                        break; 
+                         
                         case "temp":
                            $json_out = '
                             {"status": {

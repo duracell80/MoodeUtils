@@ -1,0 +1,98 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+  <script src="js/jquery-1.8.2.min.js"></script>
+    <style>
+        .bar {
+            background : black;
+            height :2px;
+            width: 0%;
+            transition: width 2s;
+            transition-timing-function: linear;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+        
+    // mpd state and metadata
+    var interval = 2000;
+    var MPD = {
+        json: 0
+    };    
+        
+        
+    function engineMpd() {
+
+    $.ajax({
+		type: 'GET',
+		url: 'engine-mpd.php',
+		async: true,
+		cache: false,
+		success: function(data) {
+			
+			//console.log('engineMpd: success branch: data=(' + data + ')');
+
+			// always have valid json
+			try {
+				MPD.json = JSON.parse(data);
+			}
+			catch (e) {
+				MPD.json['error'] = e;
+			}
+
+			if (typeof(MPD.json['error']) === 'undefined') {
+				
+                //var elapsedpc = (( MPD.json['elapsed'] / MPD.json['time'] ) * 100);
+                var elapsedpc = MPD.json['song_percent'];
+                var elapsed = elapsedpc + "%";
+				
+                if(elapsedpc > 80){
+                    interval = 500;
+                }
+                
+                
+                $('#hidden').text(elapsedpc);
+                $('.bar').css('width', elapsed);
+                
+            }
+			// error of some sort
+			else {
+				
+
+				
+			}
+		},
+        complete: function (data) {
+            // Schedule the next
+            if(MPD.json['state'] != 'stop'){
+				setTimeout(engineMpd, interval);    
+            }
+            
+        },
+        // network connection interrupted or client network stack timeout
+		error: function(data) {
+			
+
+			
+		}
+    });
+}  
+    engineMpd(); 
+    </script>
+    
+    <div id="hidden">dfsdfds</div>
+    
+    <div class="bar"></div>
+    
+</body>
+</html>
