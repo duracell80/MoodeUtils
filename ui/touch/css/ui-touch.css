@@ -6,7 +6,7 @@ html {
 }
 body {
     background-color : #000;
-    
+    overflow:hidden;
 }
 
 
@@ -24,7 +24,6 @@ body {
 .main {
     height : 80%;
     width : 100%;
-    overflow-y: auto;
     background : #000;
     color : #fff;
     padding-bottom : 300px;
@@ -95,14 +94,72 @@ body {
 }
 
 
+
+
+
+.player-lcd {
+    font-family: 'Baloo2 Regular';
+    color : #fff;
+    text-align : center;
+    padding : 15px;
+    position : absolute;
+    top: 2em;
+}
+
+.player-lcd .ui-lcd-clock {
+    font-size : 250%;
+}
+
+
+
+.ui-system-status {
+    color : #fff;
+    text-align : right;
+}
+
+
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
 
+/* Desktop (landscape) ----------- */
+@media (min-width: 1281px) {
+    
+    .ui-scroll {
+        padding-right: 0.75em;
+    }
+    
+    .ui-scroll:hover {
+        overflow-y: auto;
+        padding-right: 0em;
+    }
+    
+    .ui-scroll::-webkit-scrollbar {
+        width: 0.75em;
+    }
 
+    .ui-scroll::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
 
+    .ui-scroll::-webkit-scrollbar-thumb {
+      background-color: #333;
+      outline: 1px solid #333;
+       
+    }
+    
+    .player-lcd {
+        padding : 15px;
+        position : absolute;
+        top: 7em;
+    }
+    
+    .player-lcd .ui-lcd-clock {
+        font-size : 500%;
+    }
 
+}
 
 
 
@@ -116,6 +173,10 @@ body {
     .playbar {
       height: 90px;
     }
+    
+    .player-lcd {
+        top: 5em;
+    }
 }
 
 /* Pi Touch (portrait) ----------- */
@@ -126,5 +187,22 @@ body {
     
     .playbar {
       height: 75px;
+    }
+    
+    .main {
+        margin-top      : 100px; 
+        margin-bottom   : -100px;
+        
+    }
+    
+    .player-main-menu {
+        margin : 10% 0% 0% 10%;
+    }
+
+    .player-main-menu li {
+        width : 90%;
+        margin-left : 5%;
+        padding : 3% 3% 3% 3%;
+
     }
 }

@@ -14,7 +14,7 @@
             background : black;
             height :2px;
             width: 0%;
-            transition: width 2s;
+            transition: width 3s;
             transition-timing-function: linear;
         }
     </style>
@@ -25,10 +25,22 @@
     <script>
         
     // mpd state and metadata
-    var interval = 2000;
+    var interval = 3000;
     var MPD = {
         json: 0
-    };    
+    };
+     
+        
+    function formatSizeUnits(bytes){
+      if      (bytes >= 1073741824) { bytes = (bytes / 1073741824).toFixed(2) + " GB"; }
+      else if (bytes >= 1048576)    { bytes = (bytes / 1048576).toFixed(2) + " MB"; }
+      else if (bytes >= 1024)       { bytes = (bytes / 1024).toFixed(2) + " KB"; }
+      else if (bytes > 1)           { bytes = bytes + " bytes"; }
+      else if (bytes == 1)          { bytes = bytes + " byte"; }
+      else                          { bytes = "0 bytes"; }
+      return bytes;
+    }    
+        
         
         
     function engineMpd() {
@@ -54,14 +66,75 @@
 				
                 //var elapsedpc = (( MPD.json['elapsed'] / MPD.json['time'] ) * 100);
                 var elapsedpc = MPD.json['song_percent'];
-                var elapsed = elapsedpc + "%";
-				
-                if(elapsedpc > 80){
+                
+                if(elapsedpc > 90){
                     interval = 500;
+                    elapsedpc = elapsedpc + 10;
+                } else if (elapsedpc == 0) {
+                    
+                    
+                    // Radio (Perpeptual) ...
+                    if(MPD.json['artist'].indexOf('Radio') !== -1){
+                        interval    = 5000;
+                        var hours   = MPD.json['elapsed'] / 3600;
+                        
+                        // Beautify elapsed time for radio for hours long playback
+                        if(minutes < 2) {
+                            timetext = minutes + " Minute";
+                        } else if(minutes < 60)  {
+                            timetext = minutes + " Minutes";
+                        } else {
+                            var disphours = hours > 0 ? Math.floor(hours) + (hours < 2 ? " Hour, " : " Hours, ") : "";
+                            timetext = disphours;
+                        }
+                        $('.elapsed').text(timetext);
+                        
+                        
+                        // Do some cool stuff with estimating data usage of current playback listening based on bitrate
+                        if(MPD.json['bitrate'].indexOf('kbps') !== -1){
+                            var datarate    = MPD.json['bitrate'].split("kbps");
+                            var dataused    = formatSizeUnits((datarate[0] * MPD.json['elapsed']) * 1024);
+                            $('.bandwidth').text(dataused);
+                        }
+                        
+                        // Do a nice trick on title change to bring progress bar to zero then back to 100
+                        var last_title = $('.title').text();
+                        
+                        if(last_title == MPD.json['title']){
+                            elapsedpc   = 100;
+                            $('.icon-radio .icon-label').text("RADIO");
+                        } else {
+                            elapsedpc   = 0;
+                            $('.icon-radio .icon-label').text("RADIO TUNE");
+                        }
+                        
+                        
+                        $('.icon-radio').show();
+                        $('.bitrate').text(MPD.json['bitrate']);
+                        var minutes = Math.floor(MPD.json['elapsed'] / 60);
+                    
+                    // Not Radio (Not Perpetual) ...   
+                    } else {
+                        $('.icon-radio').hide();
+                        $('.elapsed').text(MPD.json['elapsed']);
+                    }
                 }
                 
                 
+                var elapsed = elapsedpc + "%";
+				
+                
+                
+                
                 $('#hidden').text(elapsedpc);
+                $('.artist').text(MPD.json['artist']);
+                $('.album').text(MPD.json['album']);
+                $('.title').text(MPD.json['title']);
+                
+                
+                
+                
+                
                 $('.bar').css('width', elapsed);
                 
             }
@@ -90,9 +163,17 @@
     engineMpd(); 
     </script>
     
-    <div id="hidden">dfsdfds</div>
+    <div class="icon-radio"><span class="icon-label">RADIO</span></div>
+    
     
     <div class="bar"></div>
+    <div class="meta">
+        <ul>
+            <li><span class="elapsed"></span> <span class="bitrate"></span> ( <span class="bandwidth"></span> )</li>
+            <li><span class="title"></span></li>
+            <li><span class="album"></span></li>
+        </ul>
+    </div>
     
 </body>
 </html>

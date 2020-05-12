@@ -4,7 +4,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     
-    <title>Sticky Footer Template for Bootstrap</title>
+    <title>Moode Touch</title>
 
     
     <!-- Bootstrap core CSS -->
@@ -12,10 +12,17 @@
     <link href="./css/ui-touch.css" rel="stylesheet">
     <link href="./css/ui-touch-fonts.css" rel="stylesheet">
     <script src="./js/jquery.min.js"></script>
+    <script src="./js/ui-lcd.js"></script>
     
     
     <script>
+        
+        
     $( document ).ready(function() {
+        
+        currentTime("ui-lcd-clock");
+
+        
         $( ".playbar .icon-more" ).click(function() {
             $( ".playbar .playbar-controls" ).hide();
             $( ".playbar .playbar-more" ).show();
@@ -36,14 +43,21 @@
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark player-nav-menu">
     <a class="navbar-brand" href="#"><i class="material-icons">arrow_back</i></a>
-    </nav>      
+        <div class="ui-system-status">
+            sdasdasdsa
+        </div>
+    </nav>
+        
+    <div class="col-sm-4  player-lcd">
+        <div class="container-fluid">
+        <div id="ui-lcd-clock" class="ui-lcd-clock">00:00</div>
+        </div>
+    </div> 
           
     <!-- Begin page content -->
-    <div role="main" class="main row">
-        <div class="col-sm-4 player-status">
-            <div class="container-fluid">
-            dfsfsf
-            </div>
+    <div role="main" class="main row ui-scroll">
+        <div class="col-sm-4 player-main-left">
+            
         </div>
         <div class="col-sm-8">
         <ul class="list-group player-main-menu">
@@ -97,11 +111,11 @@
           <div class="row playbar-controls">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">radio_button_unchecked</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">skip_previous</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-active">play_circle_filled</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">skip_next</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-more">more_vert</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">skip_previous</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-active">play_circle_filled</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">skip_next</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-more">more_vert</i></div>
                 </div>
             </div>
           </div>
@@ -110,11 +124,11 @@
           <div class="row playbar-more">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">radio_button_unchecked</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">replay_30</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-active">volume_mute</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48">forward_30</i></div>
-                    <div class="col py-3"><i class="material-icons p-pi-36 l-pi-48 icon-close">more_vert</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">replay_30</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-active">volume_mute</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">forward_30</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-close">more_vert</i></div>
                 </div>
             </div>
           </div>
