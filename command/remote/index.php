@@ -9,10 +9,10 @@
 */
 
 
-header("Expires: on, 01 Jan 1970 00:00:00 GMT");
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+//header("Expires: on, 01 Jan 1970 00:00:00 GMT");
+//header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: no-store, no-cache, must-revalidate");
-header("Cache-Control: post-check=0, pre-check=0", false);
+//header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 
@@ -342,7 +342,81 @@ if(isset($dir) && !empty($dir)){
             
             switch ($mod) {      
             
+            case "stationstream":
+                $jsonObj->streamfile      = shell_exec("sudo mpc -f %file% | head -1");
+                $json_out = json_encode($jsonObj);
+                echo($json_out);
+            break;        
+                    
+            case "station":
+                    
+                    
+                    $src = shell_exec("sudo mpc -f %file% | head -1");
             
+                    // Set Lookup Method
+                    stream_context_set_default(
+                        array(
+                            'http' => array(
+                                'method' => 'GET',
+                                'user_agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.30 (KHTML, like Gecko) Ubuntu/10.10 Chromium/12.0.742.112 Chrome/12.0.742.112 Safari/534.30'
+                            )
+                        )
+                    );
+                    
+                     
+                    
+                    $header     = get_headers($src, 1);
+                    $station_name = "Radio Station";
+                    
+                    
+                    $lookup = [
+                        "type" => $header["Content-Type"],
+                        "server" => $header["Server"],
+                    ];
+                    
+                    
+                   
+                    
+                    if(isset($header["icy-name"]) && $header["icy-name"] != ""){
+                        $station_name = $header["icy-name"];
+                    } else {
+                        
+                        // Check Location for MP3 file ... echo($header["Location"]);
+                        
+                        if(strpos(basename($header["Location"]).PHP_EOL, "mp3") !== false){
+                            $station_name = basename($header["Location"], ".mp3").PHP_EOL;
+                        } else{
+                            // Get Station Website URL
+                            $url        = $header["Location"];
+                            $parent     = parse_url($url);
+
+                            if($header["icy-url"] != "") {
+                                $lookup_url = $header["icy-url"];
+                            } else {
+                                $lookup_url = $parent["host"];
+                            }
+
+                            // Lookup from Website
+                            function get_title($url){
+                              $str = file_get_contents($url);
+                              if(strlen($str)>0){
+                                $str = trim(preg_replace('/\s+/', ' ', $str)); // supports line breaks inside <title>
+                                preg_match("/\<title\>(.*)\<\/title\>/i",$str,$title); // ignore case
+                                return $title[1];
+                              }
+                            }
+                            $station_name = get_title($lookup_url);
+                        }
+                    }
+                    $lookup["station"] = $station_name; 
+                    $lookup["response"] = json_encode($header);
+                    echo json_encode($lookup);
+                    //echo json_encode($header);
+                    
+                    
+                break;    
+                    
+                    
             case "status":
                 if(!$cmd || $cmd == ""){$cmd = "device";}
                 
@@ -404,78 +478,77 @@ if(isset($dir) && !empty($dir)){
                         break; 
                          
                         case "temp":
-                           $json_out = '
-                            {"status": {
-                              "temp": "'.$device["soc temperature"].'"
-                            }}';
+                           //$json_out = '
+                            //{"temp": "'.$device["soc temperature"].'"}';
+                            //echo(trim($json_out));
+                            
+                            $myObj->temp = $device["soc temperature"];
+
+                            $json_out = json_encode($myObj);
                             echo($json_out);
                         break;
                         
                         case "mem":
-                           $json_out = '
-                            {"status": {
-                              "mem": "'.$device["memory free"].'"
-                            }}';
+                            $myObj->mem = $device["memory free"];
+
+                            $json_out = json_encode($myObj);
                             echo($json_out);
                         break;
                             
                         case "vol":
-                           $json_out = '
-                            {"status": {
-                              "vol": "'.$device["volume knob"].'"
-                            }}';
+                            $jsonObj->vol = $device["volume knob"];
+                            
+                            $json_out = json_encode($jsonObj);
                             echo($json_out);
                         break;
                         
                         case "net":
-                           $json_out = '
-                            {"status": {
-                              "wifi": "'.$device["wlan address"].'",
-                              "eth0": "'.$device["ethernet address"].'",
-                              "btctrl": "'.$device["bluetooth controller"].'",
-                              "btpair": "'.$device["pairing agent"].'"
-                            }}';
+                            $jsonObj->wifi        = $device["wlan address"];
+                            $jsonObj->eth0        = $device["ethernet address"];
+                            $jsonObj->btctrl      = $device["bluetooth controller"];
+                            $jsonObj->btpair      = $device["pairing agent"];
+                            
+                            $json_out = json_encode($jsonObj);
                             echo($json_out);
                         break;
                             
                         case "services":
-                           $json_out = '
-                            {"status": {
-                              "spotify": "'.$device["spotify receiver"].'",
-                              "airplay": "'.$device["airplay receiver"].'",
-                              "squeezelite": "'.$device["squeezelite"].'",
-                              "upnp": "'.$device["upnp client"].'"
-                            }}';
+                            $jsonObj->spotify     = $device["spotify receiver"];
+                            $jsonObj->airplay     = $device["airplay receiver"];
+                            $jsonObj->squeezelite = $device["squeezelite"];
+                            $jsonObj->upnp        = $device["upnp client"];
+                            
+                            $json_out = json_encode($jsonObj);
                             echo($json_out);
                         break;
                             
                         case "display":
-                           $json_out = '
-                            {"status": {
-                              "localui": "'.$device["local ui display"].'",
-                              "brightness": "'.$device["brightness"].'"
-                            }}';
+                            $jsonObj->lcd         = $device["local ui display"];
+                            $jsonObj->lcdbr       = $device["brightness"];
+
+                            $json_out = json_encode($jsonObj);
                             echo($json_out);
                         break;
                             
                         default:
-                            
-                            $json_out = '
-                            {"status": {
-                              "mem": "'.$device["memory free"].'",
-                              "temp": "'.$device["soc temperature"].'",
-                              "vol": "'.$device["volume knob"].'",
-                              "wifi": "'.$device["wlan address"].'",
-                              "eth0": "'.$device["ethernet address"].'",
-                              "btctrl": "'.$device["bluetooth controller"].'",
-                              "btpair": "'.$device["pairing agent"].'",
-                              "spotify": "'.$device["spotify receiver"].'",
-                              "airplay": "'.$device["airplay receiver"].'",
-                              "squeezelite": "'.$device["squeezelite"].'",
-                              "upnp": "'.$device["upnp client"].'"
-                            }}';
-                            
+                       
+                            $jsonObj->mem         = trim($device["memory free"]);
+                            $jsonObj->temp        = trim($device["soc temperature"]);
+                            $jsonObj->vol         = trim($device["volume knob"]);
+                            $jsonObj->wifi        = trim($device["wlan address"]);
+                            $jsonObj->eth0        = trim($device["ethernet address"]);
+                            $jsonObj->btctrl      = trim($device["bluetooth controller"]);
+                            $jsonObj->btpair      = trim($device["pairing agent"]);
+                            $jsonObj->spotify     = trim($device["spotify receiver"]);
+                            $jsonObj->airplay     = trim($device["airplay receiver"]);
+                            $jsonObj->squeezelite = trim($device["squeezelite"]);
+                            $jsonObj->upnp        = trim($device["upnp client"]);
+                            $jsonObj->lcd         = trim($device["local ui display"]);
+                            $jsonObj->lcdbr       = trim($device["brightness"]);
+
+                            $json_out = json_encode($jsonObj);
                             echo($json_out);
+                            
                             
                         
                             
@@ -622,6 +695,8 @@ if(isset($dir) && !empty($dir)){
                                 header("Content-Disposition: attachment; filename=". $playlistName);
                                 echo($m3u_content);  
                                 break;
+                                
+                            
 
                             default:
                                 // STREAM THE RADIO (So Simple it's brilliant)

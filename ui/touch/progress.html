@@ -17,6 +17,8 @@
             transition: width 3s;
             transition-timing-function: linear;
         }
+        
+        
     </style>
 </head>
 
@@ -29,6 +31,9 @@
     var MPD = {
         json: 0
     };
+    var STA = {
+        json: 0
+    };
      
         
     function formatSizeUnits(bytes){
@@ -39,7 +44,48 @@
       else if (bytes == 1)          { bytes = bytes + " byte"; }
       else                          { bytes = "0 bytes"; }
       return bytes;
-    }    
+    }
+        
+    function secondsToTime(secs) {
+        secs = Math.round(secs);
+        var hours = Math.floor(secs / (60 * 60));
+
+        var divisor_for_minutes = secs % (60 * 60);
+        var minutes = Math.floor(divisor_for_minutes / 60);
+
+        var divisor_for_seconds = divisor_for_minutes % 60;
+        var seconds = Math.ceil(divisor_for_seconds);
+
+        var obj = {
+            "h": hours,
+            "m": minutes,
+            "s": seconds
+        };
+        return obj;
+    }
+        
+    function lookupHeader(src) {    
+    $.ajax({
+		type: 'GET',
+		url: src,
+		dataType: 'json',
+        async: true,
+		cache: false,
+		success: function(data) {    
+           
+            
+            alert(data.Location);
+            
+            
+        },
+    complete: function (data) {
+          
+    },
+    error: function(data) {
+            
+    }
+    });
+    }
         
         
         
@@ -76,25 +122,51 @@
                     // Radio (Perpeptual) ...
                     if(MPD.json['artist'].indexOf('Radio') !== -1){
                         interval    = 5000;
+                        $('.icon-radio').show();
+                        $('.play-type').removeClass().addClass("play-type play-type-radio");
+        
+                        var seconds = MPD.json['elapsed'];
                         var hours   = MPD.json['elapsed'] / 3600;
+                        var hourqtr = (Math.round(minutes/15) * 15) % 60;
+                        var minutes = Math.floor(MPD.json['elapsed'] / 60);
+                        var timeobj = secondsToTime(seconds);
                         
-                        // Beautify elapsed time for radio for hours long playback
-                        if(minutes < 2) {
+                        // Beautify elapsed time for radio for hours long playback, which is different to listening to a song
+                        if(minutes < 1) {
+                            if(MPD.json['state'] == "stop"){
+                                timetext = "Player Inactive";
+                            } else {
+                                timetext = "Welcome Back";
+                            }
+                        } else if(minutes < 2) {
                             timetext = minutes + " Minute";
                         } else if(minutes < 60)  {
                             timetext = minutes + " Minutes";
                         } else {
-                            var disphours = hours > 0 ? Math.floor(hours) + (hours < 2 ? " Hour, " : " Hours, ") : "";
-                            timetext = disphours;
+                            var disphours       = timeobj.h > 0 ? Math.floor(timeobj.h) + (timeobj.h < 2 ? " Hour " : " Hours ") : "";
+                            var dispminutes     = timeobj.m > 0 ? Math.floor(timeobj.m) + (timeobj.m < 2 ? " Minute " : " Minutes ") : "";
+                            if(timeobj.m < 1){
+                                dispminutes = "Welcome Back";
+                            }
+                            timetext = disphours + dispminutes;
                         }
                         $('.elapsed').text(timetext);
                         
                         
                         // Do some cool stuff with estimating data usage of current playback listening based on bitrate
+                        // Start displaying data usage after 100Mb.
                         if(MPD.json['bitrate'].indexOf('kbps') !== -1){
                             var datarate    = MPD.json['bitrate'].split("kbps");
-                            var dataused    = formatSizeUnits((datarate[0] * MPD.json['elapsed']) * 1024);
-                            $('.bandwidth').text(dataused);
+                            var dataused    = Math.floor((datarate[0] / 8000) * MPD.json['elapsed']);
+                            var datatext    = dataused + " Mb";
+                            if(dataused < 100){
+                                $('.bandwidth').text("");
+                            } else {
+                                $('.bandwidth').text(dataused);
+                            }
+                            $('.bitrate').text(MPD.json['bitrate']);
+                        } else {
+                            $('.bitrate').text("VBR");
                         }
                         
                         // Do a nice trick on title change to bring progress bar to zero then back to 100
@@ -109,9 +181,11 @@
                         }
                         
                         
-                        $('.icon-radio').show();
-                        $('.bitrate').text(MPD.json['bitrate']);
-                        var minutes = Math.floor(MPD.json['elapsed'] / 60);
+                        
+                        
+                        
+                        //var station_name = lookupHeader('http://telstar1/command/remote/?dir=rx&mod=lookup&src=http://streams.fluxfm.de/event04/mp3-320/audio/play.m3');
+                        
                     
                     // Not Radio (Not Perpetual) ...   
                     } else {
@@ -129,6 +203,7 @@
                 $('#hidden').text(elapsedpc);
                 $('.artist').text(MPD.json['artist']);
                 $('.album').text(MPD.json['album']);
+                
                 $('.title').text(MPD.json['title']);
                 
                 
@@ -149,6 +224,8 @@
             // Schedule the next
             if(MPD.json['state'] != 'stop'){
 				setTimeout(engineMpd, interval);    
+            } else {
+                setTimeout(engineMpd, 60000);
             }
             
         },
@@ -159,20 +236,105 @@
 			
 		}
     });
-}  
-    engineMpd(); 
+    }  
+    engineMpd();
+    
+        
+    //http://telstar1/command/remote/?dir=rx&mod=status   
+    function engineSys() {    
+    $.ajax({
+		type: 'GET',
+		url: 'http://telstar1/command/remote/?dir=rx&mod=status',
+		dataType: 'json',
+        async: true,
+		cache: false,
+		success: function(pistatus) {    
+           
+            
+            $('.sys_mem').text(pistatus.mem);
+            $('.sys_temp').text(pistatus.temp);
+            $('.sys_vol').text(pistatus.vol);
+            $('.sys_wifi').text(pistatus.wifi);
+            $('.sys_eth0').text(pistatus.eth0);
+            
+            if(pistatus.btctrl == "on" && pistatus.btpair == "on"){
+                pistatus.bt = "on";
+                $('.sys_bt').text(pistatus.bt);
+            } else {
+                pistatus.bt = "off";
+                $('.sys_bt').text(pistatus.bt);
+            }
+            
+            $('.sys_lcd').text(pistatus.lcd);
+            $('.sys_lcdbr').text(pistatus.lcdbr);
+           
+            
+            $('.sys_spotify').text(pistatus.spotify);
+            $('.sys_airplay').text(pistatus.airplay);
+            $('.sys_squeezelite').text(pistatus.squeezelite);
+            $('.sys_upnp').text(pistatus.upnp);
+            
+            
+        },
+    complete: function (pistatus) {
+        setTimeout(engineSys, 60000);    
+    },
+    error: function(pistatus) {
+         setTimeout(engineSys, 10000);   
+    }
+    });
+    }
+    
+    engineSys();
+        
+    
+    $( document ).ready(function() {
+        
+        // Station unknown request lookup upon tapping station field ...
+        $( ".play-type-radio .album" ).click(function() {
+            $.ajax({
+                type: 'GET',
+                url: 'http://telstar1/command/remote/?dir=rx&mod=stationstream',
+                dataType: 'json',
+                async: true,
+                cache: false,
+                success: function(radio) {    
+                    $('.album').text(radio.streamfile);
+                }
+            });
+        });
+    });    
+      
+        
     </script>
     
     <div class="icon-radio"><span class="icon-label">RADIO</span></div>
     
-    
-    <div class="bar"></div>
-    <div class="meta">
-        <ul>
-            <li><span class="elapsed"></span> <span class="bitrate"></span> ( <span class="bandwidth"></span> )</li>
-            <li><span class="title"></span></li>
-            <li><span class="album"></span></li>
-        </ul>
+    <div class="play-type play-type-radio">
+        <div class="bar"></div>
+        <div class="meta">
+            <ul>
+                <li><span class="elapsed"></span> <span class="bandwidth"></span></li>
+                <li><span class="title"></span></li>
+                <li><span class="album"></span> - <span class="bitrate"></span></li>
+            </ul>
+
+            <h2>System:</h2>
+            <ul>
+                <li>RAM: <span class="sys_mem"></span></li>
+                <li>CPU: <span class="sys_temp"></span></li>
+                <li>VOL: <span class="sys_vol"></span></li>
+                <li>LCD: <span class="sys_lcdbr"></span> ( <span class="sys_lcd"></span> )</li>
+                <li>NET:<span class="sys_wifi"></span></li>
+                <li>ETH:<span class="sys_eth0"></span></li>
+                <li>BLT:<span class="sys_bt"></span></li>
+                <li>SPT:<span class="sys_spotify"></span></li>
+                <li>ARP:<span class="sys_airplay"></span></li>
+                <li>SQZ:<span class="sys_squeezelite"></span></li>
+                <li>PNP:<span class="sys_upnp"></span></li>
+
+            </ul>
+        </div>
     </div>
     
 </body>
