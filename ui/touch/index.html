@@ -6,47 +6,27 @@
     
     <title>Moode Touch</title>
 
+    <link href="css/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="css/ui-touch.css" rel="stylesheet">
+    <link href="css/ui-touch-fonts.css" rel="stylesheet">
     
-    <!-- Bootstrap core CSS -->
-    <link href="./css/bootstrap-material-design.min.css" rel="stylesheet">
-    <link href="./css/ui-touch.css" rel="stylesheet">
-    <link href="./css/ui-touch-fonts.css" rel="stylesheet">
-    <script src="./js/jquery.min.js"></script>
-    <script src="./js/ui-lcd.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/playerlib.js"></script>
+    <script src="js/ui-lcd.js"></script>
+    <script src="js/ui-main.js"></script>
     
     
-    <script>
-        
-        
-    $( document ).ready(function() {
-        
-        currentTime("ui-lcd-clock");
-
-        
-        $( ".playbar .icon-more" ).click(function() {
-            $( ".playbar .playbar-controls" ).hide();
-            $( ".playbar .playbar-more" ).show();
-            
-        });
-        
-        $( ".playbar .icon-close" ).click(function() {
-            $( ".playbar .playbar-more" ).hide();
-            $( ".playbar .playbar-controls" ).show();
-        });
-        
-        
-    });
-    </script>
+    
     
   </head>
 
   <body>
-    <div class="wrapper">
+    <div class="wrapper play-type play-type-radio">
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark player-nav-menu">
     <a class="navbar-brand" href="#"><i class="material-icons">arrow_back</i></a>
         <div class="ui-system-status">
-            sdasdasdsa
+            Status Icons
         </div>
     </nav>
         
@@ -107,17 +87,17 @@
       
       
       
-    <footer class="playbar">
+    <div class="playbar">
       <div class="container-fluid">
          <div class="playbar-progress"></div>
           <div class="row playbar-controls">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">skip_previous</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-active">play_circle_filled</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">skip_next</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-more">more_vert</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-home">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-prev">skip_previous</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-toggle icon-active">play_circle_outline</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-next">skip_next</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-more icon-more">more_vert</i></div>
                 </div>
             </div>
           </div>
@@ -127,18 +107,42 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">replay_30</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-active">volume_mute</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">forward_30</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-close">more_vert</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-bck">replay_30</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-mute icon-active">volume_mute</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-fwd">forward_30</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-meta">more_vert</i></div>
+                </div>
+            </div>
+          </div>
+          
+          
+          <div class="row playbar-meta">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-3 py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    
+                    <div class="col-6 py-3 h-100 playbar-metabar">
+                        <ul class="meta m-0 p-0">
+                            <li><span class="elapsed"></span> </li>
+                            <li><span class="title text-truncate"></span></li>
+                            <li><span class="album text-truncate"></span> - <span class="bitrate"></span> - <span class="bandwidth"></span></li>
+                        </ul>
+                    </div>
+                    <div class="col-3 h-100 py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 icon-close">more_vert</i></div>
                 </div>
             </div>
           </div>
           
       </div>
-    </footer>
+    </div>
           
 </div>
+      
+      
+<script>
+    engineMpd();
+    engineSys();    
+</script>
   
 
 </body></html>

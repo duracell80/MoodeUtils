@@ -111,9 +111,47 @@ if(isset($dir) && !empty($dir)){
 
                         // STATUS
                         case "status":
-                            $runcmd = "mpc status";
-                            echo(shell_exec($runcmd));
-                            break;
+                            $runrslt = shell_exec("mpc status | awk 'NR==2' | grep playing");
+                            if($runrslt != ""){
+                                $jsonObj->status = "playing";
+                            } else {
+                                $jsonObj->status = "paused";
+                            }
+                            
+                            $jsonObj->vol = shell_exec("mpc status | sed -n '/volume/p' | cut -c8-10 | sed 's/^[ \t]*//'");
+                            
+                            $runrslt = shell_exec("mpc status | awk 'NR==3' | grep 'repeat: on'");
+                            if($runrslt == ""){
+                                $jsonObj->repeat = "off";
+                            } else {
+                                $jsonObj->repeat = "on";
+                            }
+                            
+                            $runrslt = shell_exec("mpc status | awk 'NR==3' | grep 'random: on'");
+                            if($runrslt == ""){
+                                $jsonObj->random = "off";
+                            } else {
+                                $jsonObj->random = "on";
+                            }
+                            
+                            $runrslt = shell_exec("mpc status | awk 'NR==3' | grep 'single: on'");
+                            if($runrslt == ""){
+                                $jsonObj->single = "off";
+                            } else {
+                                $jsonObj->single = "on";
+                            }
+                            
+                            $runrslt = shell_exec("mpc status | awk 'NR==3' | grep 'consume: on'");
+                            if($runrslt == ""){
+                                $jsonObj->consume = "off";
+                            } else {
+                                $jsonObj->consume = "on";
+                            }
+                            
+                            $json_out = json_encode($jsonObj);
+                            echo($json_out);
+                            
+                            break; 
 
                         // VOLUME + 5
                         case "volup":
@@ -204,9 +242,19 @@ if(isset($dir) && !empty($dir)){
                             break;
 
                         // TOGGLE
-                        case "pause":
-                            $runcmd = "mpc toggle";
-                            echo(shell_exec($runcmd));
+                        case "toggle":
+                            
+                            // AN ACTUAL PAUSE PLAY FOR RADIO THAT WON'T RESET THE COUNTER
+                            $runrslt = shell_exec("mpc toggle | awk 'NR==2' | grep playing");
+                            if($runrslt != ""){
+                                $jsonObj->status = "playing";
+                            } else {
+                                $jsonObj->status = "paused";
+                            }
+                            
+                            $json_out = json_encode($jsonObj);
+                            echo($json_out);
+                            
                             break;    
 
                         // PREV
@@ -478,10 +526,6 @@ if(isset($dir) && !empty($dir)){
                         break; 
                          
                         case "temp":
-                           //$json_out = '
-                            //{"temp": "'.$device["soc temperature"].'"}';
-                            //echo(trim($json_out));
-                            
                             $myObj->temp = $device["soc temperature"];
 
                             $json_out = json_encode($myObj);
@@ -503,14 +547,52 @@ if(isset($dir) && !empty($dir)){
                         break;
                         
                         case "net":
-                            $jsonObj->wifi        = $device["wlan address"];
-                            $jsonObj->eth0        = $device["ethernet address"];
+                            $jsonObj->wirelessip  = $device["wlan address"];
+                            $jsonObj->wirelessmac = shell_exec("sudo cat /sys/class/net/wlan0/address");
+
+                            $jsonObj->wiredip     = $device["ethernet address"];
+                            $jsonObj->wiredmac    = shell_exec("sudo cat /sys/class/net/eth0/address");
+                            $jsonObj->wiredspeed  = shell_exec("sudo cat /sys/class/net/eth0/speed");
+
                             $jsonObj->btctrl      = $device["bluetooth controller"];
                             $jsonObj->btpair      = $device["pairing agent"];
                             
                             $json_out = json_encode($jsonObj);
                             echo($json_out);
                         break;
+                            
+                        case "datausage":
+                            
+                            function formatBytes($size, $precision = 0){
+                                $unit = ['b','kb','mb','gb','tb','pb','eb','zb','yb'];
+
+                                for($i = 0; $size >= 1024 && $i < count($unit)-1; $i++){
+                                    $size /= 1024;
+                                }
+
+                                return round($size, $precision).' '.$unit[$i];
+                            }
+
+                            
+                            $wired          = 0;
+                            $wireless       = 0;
+                            $wired          = shell_exec("sudo cat /sys/class/net/eth0/statistics/rx_bytes");
+                            $wireless       = shell_exec("sudo cat /sys/class/net/wlan0/statistics/rx_bytes");    
+                            
+                            if($wired > $wireless){
+                                $jsonObj->bytes = $wired;
+                                $jsonObj->dataformat  = formatBytes($wired, 2);
+                            } else {
+                                $jsonObj->bytes = $wireless;
+                                $jsonObj->dataformat  = formatBytes($wireless, 2);
+                            }
+                            
+                            $jsonObj->wirelessip  = shell_exec("sudo ip addr list wlan0 | grep inet | cut -d' ' -f6|cut -d/ -f1 | head -1");
+                            $jsonObj->wiredip     = shell_exec("sudo ip addr list eth0 | grep inet | cut -d' ' -f6|cut -d/ -f1 | head -1");
+                            
+                            $json_out = json_encode($jsonObj);
+                            echo($json_out);    
+                            break;
                             
                         case "services":
                             $jsonObj->spotify     = $device["spotify receiver"];
@@ -535,8 +617,8 @@ if(isset($dir) && !empty($dir)){
                             $jsonObj->mem         = trim($device["memory free"]);
                             $jsonObj->temp        = trim($device["soc temperature"]);
                             $jsonObj->vol         = trim($device["volume knob"]);
-                            $jsonObj->wifi        = trim($device["wlan address"]);
-                            $jsonObj->eth0        = trim($device["ethernet address"]);
+                            $jsonObj->wirelessip= shell_exec("sudo ip addr list wlan0 | grep inet | cut -d' ' -f6|cut -d/ -f1 | head -1");
+                            $jsonObj->wiredip   = shell_exec("sudo ip addr list eth0 | grep inet | cut -d' ' -f6|cut -d/ -f1 | head -1");
                             $jsonObj->btctrl      = trim($device["bluetooth controller"]);
                             $jsonObj->btpair      = trim($device["pairing agent"]);
                             $jsonObj->spotify     = trim($device["spotify receiver"]);
