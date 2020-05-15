@@ -45,6 +45,16 @@ body {
     text-align          : center;
 }
 
+.playbar.ui-dark {
+    background-color    : #000;
+    color               : #fff;
+    text-align          : center;
+}
+
+.ui-mute {
+    display : none;
+}
+
 .playbar-more,
 .playbar-meta {
     display             : none;
@@ -65,13 +75,19 @@ body {
 .playbar-progress {
     background-color    : var(--accent-color);
     height              : 3px;
-    width               : 0%;
+    width               : 100%;
     margin-left         : 0px;
     margin-right        : 0px;
     
     
     transition: width 3s;
     transition-timing-function: linear;
+}
+
+
+.playbar-aux .playbar-progress {
+    background-color    : transparent;
+    height              : 3px;
 }
 
 
@@ -152,6 +168,20 @@ body {
 }
 
 
+
+
+
+.ui-cover-view {
+   display  : flex;
+}
+
+
+
+
+
+
+
+
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
@@ -192,6 +222,15 @@ body {
     .player-lcd .ui-lcd-clock {
         font-size : 500%;
     }
+    
+    
+    .act-toggle {
+        margin-top : -15px;
+    }
+    
+    
+    
+    
 
 }
 
@@ -211,6 +250,41 @@ body {
     .player-lcd {
         top: 5em;
     }
+    
+    .ui-cover-view {
+       margin-left : 200px;
+        margin-top : 30px;
+    }
+    
+    .act-toggle {
+        margin-top : -10px;
+    }
+    
+    .cv-meta-wrapper {
+        position: fixed;
+        width: 100%;
+        bottom: 130px;
+        left: 0px;
+        padding-left: 43px;
+        padding-right: 30px;
+
+    }
+
+    .cv-meta-wrapper .cv-meta-small,
+    .cv-meta-wrapper .cv-meta-huge {
+        display : inline-block;
+    }
+
+    .cv-meta-wrapper .cv-meta-huge {
+        font-size: 300%;
+        opacity: 0.1;
+        margin-top : -50px;
+        line-height : 100%;
+    }
+
+    .cv-meta-wrapper .cv-meta-small {
+        font-size: 125%;
+    }
 }
 
 /* Pi Touch (portrait) ----------- */
@@ -223,10 +297,20 @@ body {
       height: 75px;
     }
     
+    .ui-cover-view {
+        margin-top : 30px;
+       
+    }
+    
     .main {
         margin-top      : 100px; 
         margin-bottom   : -100px;
         
+    }
+    
+    .main.row {
+        margin-left     : 0px;
+        margin-right    : 0px;
     }
     
     .player-main-menu {
@@ -238,5 +322,45 @@ body {
         margin-left : 5%;
         padding : 3% 3% 3% 3%;
 
+    }
+    
+    .act-toggle {
+        margin-top : -20px;
+    }
+    
+    .cv-meta-wrapper {
+        position: fixed;
+        width: 100%;
+        bottom: 175px;
+        left: 0px;
+        padding-left: 30px;
+        padding-right: 30px;
+
+    }
+
+    .cv-meta-wrapper .cv-meta-small,
+    .cv-meta-wrapper .cv-meta-huge {
+        display : inline-block;
+    }
+
+    .cv-meta-wrapper .cv-meta-huge {
+        font-size: 300%;
+        opacity: 0.1;
+        margin-top : -50px;
+        line-height : 100%;
+    }
+
+    .cv-meta-wrapper .cv-meta-small {
+        font-size: 125%;
+    }
+}
+
+
+
+
+/* Pi Touch (landscape) ----------- */
+@media only screen and (max-device-height : 411px) and (orientation : landscape) {
+    .cv-meta-wrapper {
+        bottom: 85px;
     }
 }

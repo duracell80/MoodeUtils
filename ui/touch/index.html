@@ -6,16 +6,57 @@
     
     <title>Moode Touch</title>
 
-    <link href="css/bootstrap-material-design.min.css" rel="stylesheet">
-    <link href="css/ui-touch.css" rel="stylesheet">
-    <link href="css/ui-touch-fonts.css" rel="stylesheet">
+    <link href="./css/bootstrap-material-design.min.css" rel="stylesheet">
+    <link href="./css/ui-cover.css" rel="stylesheet">
+    <link href="./css/ui-touch.css" rel="stylesheet">
+    <link href="./css/ui-touch-fonts.css" rel="stylesheet">
     
-    <script src="js/jquery.min.js"></script>
-    <script src="js/playerlib.js"></script>
-    <script src="js/ui-lcd.js"></script>
-    <script src="js/ui-main.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/playerlib.js"></script>
+    <script src="./js/ui-lcd.js"></script>
+    <script src="./js/ui-main.js"></script>
+    <script>
     
+        
+        
+        
+        
+        
+        
+        $( document ).ready(function() {  
+            $( ".cv-start" ).click(function() {
+                if ( $(this).hasClass("animation") ) {
+                    $(this).removeClass("animation");
+                } else {
+                    $(this).addClass("animation");
+                }
+                
+                $( ".cv-btn-wrapper" ).each(function( index ) {
+                    if ( $(this).hasClass("animation") ) {
+                        $(this).removeClass("animation");
+                    } else {
+                        $(this).addClass("animation");
+                    }
+                });
+            });
+            
+            
+            $( ".act-home" ).click(function() {
+                if ( $(".playbar-main").hasClass("ui-mute") ) {
+                    $(".playbar-main").removeClass("ui-mute");
+                    $(".playbar-aux").addClass("ui-mute");
+                } else {
+                    $(".playbar-main").addClass("ui-mute");
+                    $(".playbar-aux").removeClass("ui-mute");
+                }
+                
+            });
+        });
+        
+        
+    </script>
     
+
     
     
   </head>
@@ -32,7 +73,10 @@
         
     <div class="col-sm-4  player-lcd">
         <div class="container-fluid">
-        <div id="ui-lcd-clock" class="ui-lcd-clock">00:00</div>
+            <div id="ui-lcd-clock" class="ui-lcd-clock">00:00</div>
+            <div class="cv-meta">
+                <span class="album">Deep Space One: Deep ambient electronic and space music. [SomaFM]</span>
+            </div>
         </div>
     </div> 
           
@@ -42,7 +86,7 @@
             
         </div>
         <div class="col-sm-8">
-        <ul class="list-group player-main-menu">
+        <!--<ul class="list-group player-main-menu">
 
             <li class="list-group-item">
                 <i class="material-icons">playlist_play</i>
@@ -76,18 +120,71 @@
                 <i class="material-icons">chevron_right</i>
             </li>
 
-        </ul>
+        </ul>-->
         
+            <div class="ui-cover-view justify-content-center">
+            <div class="cv-wrapper">
+              <div class="cv-start">
+                <i class="material-icons">add</i>
+              </div>
+              <div class="cv-wrapper-inside">
+                <img src="https://image.ibb.co/eCLkRJ/profile_200.png">
+              </div>
+              <div class="cv-btn-wrapper first">
+                <div class="cv-btn first">
+                  <i class="material-icons">chat</i>
+                </div> 
+              </div>
+              <div class="cv-btn-wrapper second">
+                <div class="cv-btn second">
+                  <i class="material-icons">phone</i>
+                </div> 
+              </div>
+              <div class="cv-btn-wrapper third">
+                <div class="cv-btn third">
+                  <i class="material-icons">videocam</i>
+                </div> 
+              </div>
+            </div>
+            </div>
+            
+            
+            <div class="cv-meta-wrapper">
+            <span class="cv-meta-small">Kelly David - A Bend in the River</span>
+            <span class="cv-meta-huge">Kelly David - A Bend in the River</span>
+            </div>
+            
+            
         </div>
         
     
           
     </div>
       
+    
+        
+    <div class="playbar playbar-aux ui-dark ui-mute">
+      <div class="container-fluid">
+         <div class="playbar-progress"></div>
+          <div class="row playbar-auxcontrols">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-home">radio_button_unchecked</i></div>
+                    <div class="col py-3"></div>
+                    <div class="col py-3"></div>
+                    <div class="col py-3"></div>
+                    <div class="col py-3"></div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+        
+        
+        
       
-      
-      
-    <div class="playbar">
+    <div class="playbar playbar-main ui-light">
       <div class="container-fluid">
          <div class="playbar-progress"></div>
           <div class="row playbar-controls">
@@ -95,7 +192,7 @@
                 <div class="row">
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-home">radio_button_unchecked</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-prev">skip_previous</i></div>
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-toggle icon-active">play_circle_outline</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-78 l-pi-78 act-toggle icon-active">play_circle_filled</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-next">skip_next</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-more icon-more">more_vert</i></div>
                 </div>
@@ -106,7 +203,7 @@
           <div class="row playbar-more">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-home" >radio_button_unchecked</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-bck">replay_30</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-mute icon-active">volume_mute</i></div>
                     <div class="col py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-fwd">forward_30</i></div>
@@ -119,7 +216,7 @@
           <div class="row playbar-meta">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-3 py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48">radio_button_unchecked</i></div>
+                    <div class="col-3 py-3"><i class="material-icons lg-64 p-pi-36 l-pi-48 act-home" >radio_button_unchecked</i></div>
                     
                     <div class="col-6 py-3 h-100 playbar-metabar">
                         <ul class="meta m-0 p-0">
@@ -140,8 +237,8 @@
       
       
 <script>
-    engineMpd();
-    engineSys();    
+    //engineMpd();
+    //engineSys();    
 </script>
   
 
